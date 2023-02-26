@@ -1,0 +1,298 @@
+park_id,park_name,city,state,country
+1,Acadia National Park,Bass Harbor,Maine,United States
+2,Olympic National Park,Montesano,Washington,United States
+3,Great Smoky Mountains National Park,Bryson City,North Carolina,United States
+4,Petrified Forest National Park,Sun Valley,Arizona,United States
+5,Carlsbad Caverns National Park,Carlsbad,New Mexico,United States
+6,Yellowstone National Park,Cody,Wyoming,United States
+7,Shenandoah National Park,Elkton,Virginia,United States
+8,Olympic National Park,Sekiu,Washington,United States
+9,Great Smoky Mountains National Park,Sevierville,Tennessee,United States
+10,Congaree National Park,St. Matthews,South Carolina,United States
+11,Shenandoah National Park,Washington,Virginia,United States
+12,Pinnacles National Park,Soledad,California,United States
+13,Mount Rainier National Park,Buckley,Washington,United States
+14,Grand Teton National Park,Jackson,Wyoming,United States
+15,Zion National Park,Hurricane,Utah,United States
+16,Kings Canyon National Park,Stony Creek Village,California,United States
+17,Death Valley National Park,Bishop,California,United States
+18,Grand Teton National Park,Kelly,Wyoming,United States
+20,Fort Pickens National Park,Gulf Breeze,Florida,United States
+21,Sequoia National Park,Sequoia National Park,California,United States
+22,Death Valley National Park,Ridgecrest,California,United States
+23,Yosemite National Park,Yosemite Valley,California,United States
+24,Cuyahoga Valley National Park,Northfield,Ohio,United States
+25,Hawaii Volcanoes National Park,Volcano,Hawaii,United States
+26,Zion National Park,Orderville,Utah,United States
+27,Crater Lake National Park,Chiloquin,Oregon,United States
+28,Death Valley National Park,Beatty,Nevada,United States
+29,Kings Canyon National Park,Bishop,California,United States
+30,Shenandoah National Park,Grottoes,Virginia,United States
+31,Kings Canyon National Park,Mammoth Lakes,California,United States
+32,Theodore Roosevelt National Park,Medora,North Dakota,United States
+33,Yellowstone National Park,Big Sky,Montana,United States
+34,Mesa Verde National Park,Mesa Verde National Park,Colorado,United States
+35,Zion National Park,New Harmony,Utah,United States
+36,Carlsbad Caverns National Park,Whites City,New Mexico,United States
+37,Shenandoah National Park,Rileyville,Virginia,United States
+38,Kings Canyon National Park,Hume,California,United States
+39,Voyageurs National Park,Ranier,Minnesota,United States
+40,Glacier National Park,Whitefish,Montana,United States
+41,Indiana Dunes National Park,Portage,Indiana,United States
+42,Shenandoah National Park,Sperryville,Virginia,United States
+43,Shenandoah National Park,Dyke,Virginia,United States
+44,Badlands National Park,Interior,South Dakota,United States
+45,Zion National Park,Kanab,Utah,United States
+46,Bryce Canyon National Park,Panguitch,Utah,United States
+47,Bryce Canyon National Park,Bryce,Utah,United States
+48,Zion National Park,Springdale,Utah,United States
+49,Mammoth Cave National Park,Park City,Kentucky,United States
+50,Grand Canyon National Park,North Rim,Arizona,United States
+51,Hawaii Volcanoes National Park,Hawaiian Ocean View,Hawaii,United States
+52,Kings Canyon National Park,Dunlap,California,United States
+53,Theodore Roosevelt National Park,Watford City,North Dakota,United States
+54,Yosemite National Park,Wawona,California,United States
+55,Great Smoky Mountains National Park,Maggie Valley,North Carolina,United States
+56,Indiana Dunes National Park,Beverly Shores,Indiana,United States
+57,Redwood National Park,Trinidad,California,United States
+58,Shenandoah National Park,Etlan,Virginia,United States
+59,North Cascades National Park,Deming,Washington,United States
+60,Grand Canyon National Park,Supai,Arizona,United States
+61,Shenandoah National Park,Crimora,Virginia,United States
+62,Death Valley National Park,Tecopa,California,United States
+63,North Cascades National Park,Winthrop,Washington,United States
+64,Olympic National Park,Quinault,Washington,United States
+65,Shenandoah National Park,Stanley,Virginia,United States
+66,Hawaii Volcanoes National Park,Kalapana,Hawaii,United States
+67,Black Canyon of the Gunnison National Park,Olathe,Colorado,United States
+68,Mount Rainier National Park,Enumclaw,Washington,United States
+69,Olympic National Park,Joyce,Washington,United States
+70,Theodore Roosevelt National Park,Fairfield,North Dakota,United States
+71,Denali National Park,Cantwell,Alaska,United States
+72,Cuyahoga Valley National Park,Cuyahoga Falls,Ohio,United States
+73,Sequoia National Park,Hume,California,United States
+74,Yosemite National Park,Lee Vining,California,United States
+75,Mammoth Cave National Park,Mammoth Cave,Kentucky,United States
+76,Kings Canyon National Park,Cedar Grove,California,United States
+77,Petrified Forest National Park,Holbrook,Arizona,United States
+78,Acadia National Park,Seal Cove,Maine,United States
+79,Mount Rainier National Park,Longmire,Washington,United States
+80,Grand Canyon National Park,Cameron,Arizona,United States
+81,Mount Rainier National Park,Randle,Washington,United States
+82,Death Valley National Park,Keeler,California,United States
+83,Indiana Dunes National Park,Chesterton,Indiana,United States
+84,Glacier National Park,Coram,Montana,United States
+85,Yosemite National Park,Fish Camp,California,United States
+86,Kenai Fjords National Park,Seward,Alaska,United States
+87,Olympic National Park,Brinnon,Washington,United States
+88,Yosemite National Park,June Lake,California,United States
+89,Canyonlands National Park,Blanding,Utah,United States
+90,Badlands National Park,Wall,South Dakota,United States
+91,Crater Lake National Park,Chemult,Oregon,United States
+92,Voyageurs National Park,Kabetogama,Minnesota,United States
+93,Black Canyon of the Gunnison National Park,Montrose,Colorado,United States
+94,Great Smoky Mountains National Park,Townsend,Tennessee,United States
+95,Redwood National Park,Crescent City,California,United States
+96,Olympic National Park,Forks,Washington,United States
+97,Congaree National Park,Columbia,South Carolina,United States
+98,Saguaro National Park,Vail,Arizona,United States
+99,North Cascades National Park,Rockport,Washington,United States
+100,Acadia National Park,Birch Harbor,Maine,United States
+101,Wolf Trap National Park for the Performing Arts,Vienna,Virginia,United States
+102,Acadia National Park,Seal Harbor,Maine,United States
+103,Saguaro National Park,Willow Canyon,Arizona,United States
+104,Shenandoah National Park,Free Union,Virginia,United States
+105,Hawaii Volcanoes National Park,Holualoa,Hawaii,United States
+106,Shenandoah National Park,Stanardsville,Virginia,United States
+107,Shenandoah National Park,Waynesboro,Virginia,United States
+108,Zion National Park,Virgin,Utah,United States
+109,Indiana Dunes National Park,Gary,Indiana,United States
+110,Grand Canyon National Park,Colorado City,Arizona,United States
+111,Capitol Reef National Park,Boulder,Utah,United States
+112,Isle Royale National Park,Saint Louis,Michigan,United States
+113,Great Sand Dunes National Park and Preserve,Mosca,Colorado,United States
+114,Dry Tortugas National Park,Key West,Florida,United States
+115,Congaree National Park,Hopkins,South Carolina,United States
+116,Glacier National Park,Babb,Montana,United States
+117,Katmai National Park,Kodiak,Alaska,United States
+118,Great Basin National Park,Baker,Nevada,United States
+119,Kings Canyon National Park,Lone Pine,California,United States
+120,Kings Canyon National Park,Sequoia National Park,California,United States
+121,Shenandoah National Park,Syria,Virginia,United States
+122,Hot Springs National Park,Hot Springs National Park,Arkansas,United States
+123,Sequoia National Park,Three Rivers,California,United States
+124,Yellowstone National Park,Moran,Wyoming,United States
+125,Big Bend National Park,Redford,Texas,United States
+126,Death Valley National Park,Shoshone,California,United States
+127,Death Valley National Park,Lone Pine,California,United States
+128,Joshua Tree National Park,Indio,California,United States
+129,Saguaro National Park,Cortaro,Arizona,United States
+130,Great Smoky Mountains National Park,Cherokee,North Carolina,United States
+131,Zion National Park,Mount Carmel Junction,Utah,United States
+132,Badlands National Park,Scenic,South Dakota,United States
+133,Voyageurs National Park,Orr,Minnesota,United States
+134,Isle Royale National Park,Mohawk,Michigan,United States
+135,North Cascades National Park,Stehekin,Washington,United States
+136,Shenandoah National Park,Shenandoah,Virginia,United States
+137,Everglades National Park,Islamorada,Florida,United States
+138,Sequoia National Park,Johnsondale,California,United States
+139,Great Smoky Mountains National Park,Cosby,Tennessee,United States
+140,Yellowstone National Park,Silver Gate,Montana,United States
+141,Channel Islands National Park,Malibu,California,United States
+142,Katmai National Park,King Salmon,Alaska,United States
+143,Cuyahoga Valley National Park,Brecksville,Ohio,United States
+144,Canyonlands National Park,Moab,Utah,United States
+145,Great Smoky Mountains National Park,Gatlinburg,Tennessee,United States
+146,Glacier National Park,East Glacier Park Village,Montana,United States
+147,Acadia National Park,Bar Harbor,Maine,United States
+148,Mount Rainier National Park,Carbonado,Washington,United States
+149,Redwood National Park,Klamath,California,United States
+150,Saguaro National Park,Benson,Arizona,United States
+151,Acadia National Park,Mount Desert,Maine,United States
+152,Hawaii Volcanoes National Park,Pahoa,Hawaii,United States
+153,Mammoth Cave National Park,Brownsville,Kentucky,United States
+154,Black Canyon of the Gunnison National Park,Crawford,Colorado,United States
+155,Grand Teton National Park,Wilson,Wyoming,United States
+156,Kings Canyon National Park,Seven Pines,California,United States
+157,Wind Cave National Park,Hot Springs,South Dakota,United States
+159,"Clayton Co International Park, Jonesboro GA",Jonesboro,Georgia,United States
+160,Grand Teton National Park,Teton Village,Wyoming,United States
+161,Acadia National Park,Winter Harbor,Maine,United States
+162,Petrified Forest National Park,Chambers,Arizona,United States
+163,Glacier National Park,Lake Mc Donald,Montana,United States
+164,Gateway Arch National Park,St. Louis,Missouri,United States
+165,Theodore Roosevelt National Park,Amidon,North Dakota,United States
+166,Mount Rainier National Park,Orting,Washington,United States
+167,Zion National Park,Kanarraville,Utah,United States
+168,Sequoia National Park,Shaver Lake,California,United States
+169,Shenandoah National Park,Front Royal,Virginia,United States
+170,Olympic National Park,Hoodsport,Washington,United States
+171,Canyonlands National Park,La Sal,Utah,United States
+172,Olympic National Park,Clallam Bay,Washington,United States
+173,Black Canyon of the Gunnison National Park,Cimarron,Colorado,United States
+174,Grand Teton National Park,Moose,Wyoming,United States
+175,Shenandoah National Park,Madison,Virginia,United States
+176,Biscayne National Park,Homestead,Florida,United States
+177,Kings Canyon National Park,Independence,California,United States
+178,Redwood National Park,Orick,California,United States
+179,Cuyahoga Valley National Park,Peninsula,Ohio,United States
+180,Everglades National Park,Homestead,Florida,United States
+181,Sequoia National Park,Independence,California,United States
+182,Everglades National Park,Miami,Florida,United States
+183,Grand Canyon National Park,Grand Canyon,Arizona,United States
+184,Yosemite National Park,Oakhurst,California,United States
+185,Saguaro National Park,Tucson,Arizona,United States
+186,Glacier National Park,Polebridge,Montana,United States
+187,Yellowstone National Park,West Yellowstone,Montana,United States
+188,Glacier National Park,Essex,Montana,United States
+189,Olympic National Park,Olympia,Washington,United States
+190,Joshua Tree National Park,Coolidge Springs,California,United States
+191,Shenandoah National Park,Afton,Virginia,United States
+192,Yosemite National Park,Long Barn,California,United States
+193,Kings Canyon National Park,Badger,California,United States
+194,Indiana Dunes National Park,Michigan City,Indiana,United States
+195,Grand Teton National Park,Moran,Wyoming,United States
+196,Shenandoah National Park,Huntly,Virginia,United States
+197,Zion National Park,Duck Creek Village,Utah,United States
+198,Mount Rainier National Park,Paradise Inn,Washington,United States
+199,Yosemite National Park,Groveland,California,United States
+200,Olympic National Park,Taholah,Washington,United States
+201,Olympic National Park,Amanda Park,Washington,United States
+202,Joshua Tree National Park,Thousand Palms,California,United States
+203,Petrified Forest National Park,Petrified Forest National Park,Arizona,United States
+204,Shenandoah National Park,Luray,Virginia,United States
+205,Great Smoky Mountains National Park,Maryville,Tennessee,United States
+206,Pinnacles National Park,Paicines,California,United States
+207,Great Smoky Mountains National Park,Fontana Dam,North Carolina,United States
+208,Acadia National Park,Isle Au Haut,Maine,United States
+209,Olympic National Park,La Push,Washington,United States
+210,Wind Cave National Park,Buffalo Gap,South Dakota,United States
+211,Wind Cave National Park,Custer,South Dakota,United States
+212,Big Bend National Park,Terlingua,Texas,United States
+213,Yosemite National Park,Lone Pine,California,United States
+214,Everglades National Park,Everglades City,Florida,United States
+215,Lassen Volcanic National Park,Mill Creek,California,United States
+216,Great Smoky Mountains National Park,Waynesville,North Carolina,United States
+217,Glacier National Park,West Glacier,Montana,United States
+218,Joshua Tree National Park,Yucca Valley,California,United States
+219,Joshua Tree National Park,Mecca,California,United States
+220,North Cascades National Park,Marblemount,Washington,United States
+221,Rocky Mountain National Park,Allenspark,Colorado,United States
+222,Channel Islands National Park,Ventura,California,United States
+223,Arches National Park,Moab,Utah,United States
+224,Theodore Roosevelt National Park,Grassy Butte,North Dakota,United States
+225,Death Valley National Park,Death Valley,California,United States
+226,Glacier National Park,Browning,Montana,United States
+227,Shenandoah National Park,Bentonville,Virginia,United States
+228,Great Smoky Mountains National Park,Hartford,Tennessee,United States
+229,Bryce Canyon National Park,Tropic,Utah,United States
+230,Mount Rainier National Park,Packwood,Washington,United States
+231,Acadia National Park,Southwest Harbor,Maine,United States
+232,Biscayne National Park,Miami,Florida,United States
+233,Big Bend National Park,Big Bend National Park,Texas,United States
+234,Sequoia National Park,Lone Pine,California,United States
+235,Rocky Mountain National Park,Glen Haven,Colorado,United States
+236,Sequoia National Park,Stony Creek Village,California,United States
+237,Shenandoah National Park,Greenwood,Virginia,United States
+238,Wind Cave National Park,Pringle,South Dakota,United States
+239,North Cascades National Park,Maple Falls,Washington,United States
+240,Capitol Reef National Park,Torrey,Utah,United States
+241,Yellowstone National Park,Gardiner,Montana,United States
+242,Hawaii Volcanoes National Park,Pahala,Hawaii,United States
+243,Denali National Park,Healy,Alaska,United States
+244,Glacier Bay National Park,Gustavus,Alaska,United States
+245,Isle Royale National Park,Houghton,Michigan,United States
+246,Mammoth Cave National Park,Horse Cave,Kentucky,United States
+247,Olympic National Park,Port Angeles,Washington,United States
+248,Great Sand Dunes National Park and Preserve,Westcliffe,Colorado,United States
+249,Zion National Park,La Verkin,Utah,United States
+250,Cuyahoga Valley National Park,Hudson,Ohio,United States
+251,Sequoia National Park,Dunlap,California,United States
+252,Lassen Volcanic National Park,Old Station,California,United States
+253,Denali National Park,Denali National Park,Alaska,United States
+254,Mount Rainier National Park,Naches,Washington,United States
+255,Death Valley National Park,Trona,California,United States
+256,Lassen Volcanic National Park,Chester,California,United States
+257,Great Smoky Mountains National Park,Robbinsville,North Carolina,United States
+258,Zion National Park,Cedar City,Utah,United States
+259,Glacier National Park,Siyeh Bend,Montana,United States
+260,Grand Teton National Park,Dubois,Wyoming,United States
+261,Fort Hunt National Park,Mount Vernon,Virginia,United States
+262,Olympic National Park,Beaver,Washington,United States
+263,Olympic National Park,Lilliwaup,Washington,United States
+264,Shenandoah National Park,Port Republic,Virginia,United States
+265,Joshua Tree National Park,Twentynine Palms,California,United States
+266,Canyonlands National Park,Hanksville,Utah,United States
+267,Glacier National Park,Columbia Falls,Montana,United States
+268,Guadalupe Mountains National Park,Salt Flat,Texas,United States
+269,Cuyahoga Valley National Park,Akron,Ohio,United States
+270,Mount Rainier National Park,Ashford,Washington,United States
+271,Arches National Park,Thompson,Utah,United States
+272,Hawaii Volcanoes National Park,Honaunau,Hawaii,United States
+273,Grand Teton National Park,Yellowstone National Park,Wyoming,United States
+274,Yosemite National Park,Bridgeport,California,United States
+275,Lassen Volcanic National Park,McArthur,California,United States
+276,Canyonlands National Park,Monticello,Utah,United States
+277,Rocky Mountain National Park,Grand Lake,Colorado,United States
+278,Grand Teton National Park,Alta,Wyoming,United States
+279,Kings Canyon National Park,Big Pine,California,United States
+280,Zion National Park,Rockville,Utah,United States
+281,Yosemite National Park,Mi Wuk Village,California,United States
+282,Shenandoah National Park,Crozet,Virginia,United States
+283,Yellowstone National Park,Yellowstone National Park,Wyoming,United States
+284,Joshua Tree National Park,Joshua Tree,California,United States
+285,Olympic National Park,Sequim,Washington,United States
+286,Capitol Reef National Park,Hanksville,Utah,United States
+287,Death Valley National Park,Darwin,California,United States
+288,Crater Lake National Park,Crater Lake,Oregon,United States
+290,Great Smoky Mountains National Park,Tallassee,Tennessee,United States
+291,Rocky Mountain National Park,Estes Park,Colorado,United States
+292,Fort Hunt National Park,Alexandria,Virginia,United States
+293,Theodore Roosevelt National Park,Belfield,North Dakota,United States
+294,Joshua Tree National Park,Blythe,California,United States
+295,Olympic National Park,Quilcene,Washington,United States
+296,Redwood National Park,Hoopa,California,United States
+297,Channel Islands National Park,Santa Barbara,California,United States
+19,Congaree National Park,Gadsden,South Carolina,United States
+158,Haleakala National Park,Hana,Hawaii,United States
+289,Haleakala National Park,Kula,Hawaii,United States

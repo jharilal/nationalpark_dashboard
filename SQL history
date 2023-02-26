@@ -1,0 +1,863 @@
+# Creating initial table
+CREATE TABLE PUBLIC."rawdata"(
+	trail_id BIGINT UNIQUE,
+	trail_name VARCHAR(255),
+	area_name VARCHAR(255),
+	city_name VARCHAR(255),
+	state_name VARCHAR(255),
+	country_name VARCHAR(255),
+	geoloc VARCHAR(255),
+	popularity FLOAT(4),
+	length FLOAT(4),
+	elevation_gain FLOAT(4),
+	difficulty_rating SMALLINT,
+	route_type VARCHAR(255),
+	visitor_usage FLOAT(4),
+	avg_rating FLOAT(4),
+	num_reviews SMALLINT,
+	features VARCHAR(255),
+	activities VARCHAR(255),
+	units VARCHAR(255)
+)
+
+# Verifying table is present
+SELECT * FROM rawdata
+
+# Loading in data
+COPY Public."rawdata" FROM 'PATH/TO/nationalpark_trails.csv'
+DELIMITER ','
+CSV HEADER;
+
+# Validating data loaded in correctly
+SELECT * FROM rawdata LIMIT 10;
+
+# Validating data is within character length
+SELECT max(length(trail_name)),
+	   max(length(features)),
+   	   max(length(activities)),
+   	   max(length(area_name))
+	   FROM rawdata
+
+# Setting up tables to follow Entity relationship model
+CREATE TABLE PUBLIC."trail"(
+	trail_id BIGINT PRIMARY KEY,
+	trail_name VARCHAR(255),
+	geoloc VARCHAR(255),
+	length FLOAT(4),
+	elevation_gain FLOAT(4),
+	route_type VARCHAR(255),
+	features VARCHAR(255),
+	activities VARCHAR(255),
+)
+
+CREATE TABLE PUBLIC."trailreview"(
+	trail_id BIGINT PRIMARY KEY,
+	popularity FLOAT(4),
+	difficulty_rating SMALLINT,
+	visitor_usage FLOAT(4),
+	avg_rating FLOAT(4),
+	num_reviews SMALLINT
+)
+
+CREATE TABLE PUBLIC."nationalpark"(
+	trail_id BIGINT PRIMARY KEY,
+	area_name VARCHAR(255),
+	city_name VARCHAR(255),
+	state_name VARCHAR(255),
+	country_name VARCHAR(255)
+)
+
+# Populating new tables
+
+INSERT INTO trail (trail_id, trail_name, geoloc, length, elevation_gain, route_type, features, activities)
+SELECT trail_id, trail_name, geoloc, length, elevation_gain, route_type, features, activities
+FROM rawdata
+
+INSERT INTO trailreview (trail_id, popularity, difficulty_rating,visitor_usage, avg_rating, num_reviews)
+SELECT trail_id, popularity, difficulty_rating,visitor_usage, avg_rating, num_reviews
+FROM rawdata
+
+INSERT INTO nationalpark (trail_id, area_name, city_name, state_name, country_name)
+SELECT trail_id, area_name, city_name, state_name, country_name
+FROM rawdata
+
+
+# Updating column name in nationalpark table
+ALTER TABLE nationalpark
+RENAME area_name TO park_name;
+
+
+# Cleaning up NATIONALPARK table
+
+# Check distinct countries
+
+SELECT DISTINCT(country_name) from nationalpark
+
+> Output
+"Hawaii"
+"United States"
+
+# Updating country name to "United States"
+
+UPDATE nationalpark
+SET country_name = 'United States'
+WHERE country_name = 'Hawaii'
+
+SELECT distinct(country_name) FROM nationalpark
+
+> Output
+"United States"
+
+# Checking state_name
+
+select distinct(state_name) from nationalpark
+order by state_name asc
+
+In the output, 'Maui' is a value for state_name - changing to 'Hawaii'
+
+UPDATE nationalpark
+SET state = 'Hawaii'
+WHERE state = 'Maui'
+RETURNING *;
+
+# Investigating other values for 'Hawaii' to make sure there would be consistency before making the update
+
+select * from nationalpark
+where state_name in ('Maui', 'Hawaii')
+
+
+
+# At this point, I want to reduce the values in the nationalpark database to create the one to many relation with the trails table
+# I will create a new table as an intermediate
+
+SELECT count( distinct(park_name, city_name, state_name, country_name)) from nationalpark
+
+> Output
+297 // Expecting 297 individual entries in the new table
+
+CREATE TABLE park(
+	park_id SERIAL UNIQUE,
+	park_name VARCHAR(255),
+	city VARCHAR(255),
+	state  VARCHAR(255),
+	country  VARCHAR(255)
+)
+
+INSERT INTO park (park_name, state, city, country)
+SELECT DISTINCT park_name, state_name, city_name, country_name 
+FROM nationalpark
+
+SELECT * FROM park;
+
+# Now with a smaller table, I need to be able to connect and join with the original trail table. This is where trail_id comes
+# in for identification. I will insert the park_id into the trail table as a foreign key. The easiest way to perform this task
+# was to join and create a new table as the result of the query
+
+CREATE TABLE trail AS
+SELECT t.trail_id,p.park_id, t.trail_name, 
+	t.geoloc, t.length, t.elevation_gain, t.route_type, t.features, t.activities
+FROM trail_a t
+LEFT JOIN nationalpark n
+ON t.trail_id = n.trail_id
+LEFT JOIN park p
+ON n.park_name = p.park_name
+	AND n.city_name = p.city
+	AND n.state_name = p.state;
+
+
+# Adding constraints to newly made table
+
+ALTER TABLE trail
+ADD CONSTRAINT pk_trail_id PRIMARY KEY(trail_id);
+
+ALTER TABLE trail
+ADD CONSTRAINT fk_park_id FOREIGN KEY(park_id) REFERENCES park(park_id);
+
+ALTER TABLE trailreview
+ADD CONSTRAINT fk_trail_id FOREIGN KEY(trail_id) REFERENCES trail(trail_id)
+
+# Validating that the data matches up for park name, city name, and state name
+
+select t.trail_id, n.park_name, p.park_name
+from trail t
+left join park p
+on t.park_id = p.park_id
+left join  nationalpark n
+on t.trail_id = n.trail_id
+where n.park_name != p.park_name OR n.city_name != p.city OR n.state_name != p.state
+
+>Output
+0 rows
+
+# Converting "Congaree National Park Wilderness" to "Congaree National Park"
+# While reviewing the park names, I noticed there is a "Congaree National Park Wilderness" and "Congaree National Park"
+# "Congaree National Park Wilderness" has only one trail, in a seperate city location. It would be better to maintain
+# the seperate city location, but update the park_name to "Congaree National Park"
+
+10	"Congaree National Park"	"St. Matthews"	"South Carolina"	"United States"
+19	"Congaree National Park Wilderness"	"Gadsden"	"South Carolina"	"United States"
+97	"Congaree National Park"	"Columbia"	"South Carolina"	"United States"
+115	"Congaree National Park"	"Hopkins"	"South Carolina"	"United States"
+
+will become
+
+10	"Congaree National Park"	"St. Matthews"	"South Carolina"	"United States"
+19	"Congaree National Park"	"Gadsden"	"South Carolina"	"United States"
+97	"Congaree National Park"	"Columbia"	"South Carolina"	"United States"
+115	"Congaree National Park"	"Hopkins"	"South Carolina"	"United States"
+
+Since only the name of the park is changing, I do not need to alter anything within the  trail table
+
+UPDATE park
+SET park_name = 'Congaree National Park' where park_name = 'Congaree National Park Wilderness'
+
+>Output
+UPDATE 1
+
+# Splitting latitude and longitude into seperate rows
+# Structure of attribute is
+
+SELECT geoloc FROM trail
+
+> Output
+"{'lat': 60.18852, 'lng': -149.63156}"
+
+# and the goal is to have
+60.18852 -149.63156
+
+# Extracting the data with 
+
+SELECT trim(split_part(geoloc, ',', 1), '{''lat'': ') as latitude,
+	trim(trim(split_part(geoloc, ',', 2),'''lng'': '), '}') as longitude
+FROM trail
+LIMIT 5;
+
+> Output
+
+"60.18852"	"-149.63156"
+"63.73049"	"-148.91968"
+"60.18879"	"-149.631"
+"63.73661"	"-148.915"
+"63.73319"	"-148.89682"
+
+# Adding query results as columns
+
+ALTER TABLE trail
+ADD COLUMN latitude VARCHAR(255);
+
+ALTER TABLE trail
+ADD COLUMN longitude VARCHAR(255);
+
+UPDATE trail
+SET latitude = qr.latitude
+FROM (
+SELECT 
+	trail_id,
+	trim(split_part(geoloc, ',', 1), '{''lat'': ') as latitude,
+	trim(trim(split_part(geoloc, ',', 2),'''lng'': '), '}') as longitude
+FROM trail
+) qr
+WHERE trail.trail_id = qr.trail_id
+
+update trail
+set longitude = qr.longitude
+FROM (
+SELECT 
+	trail_id,
+	trim(split_part(geoloc, ',', 1), '{''lat'': ') as latitude,
+	trim(trim(split_part(geoloc, ',', 2),'''lng'': '), '}') as longitude
+FROM trail
+) qr
+WHERE trail.trail_id = qr.trail_id
+
+# Verifying results
+
+select trail_id, park_id, geoloc, latitude, longitude from trail limit 5;
+
+> Output
+
+10333569	253	"{'lat': 63.80495, 'lng': -148.95416}"	"63.80495"	"-148.95416"
+10347459	142	"{'lat': 58.55986, 'lng': -155.77752}"	"58.55986"	"-155.77752"
+10302108	244	"{'lat': 58.4543, 'lng': -135.86902}"	"58.4543"	"-135.86902"
+10333558	253	"{'lat': 63.7315, 'lng': -148.91785}"	"63.7315"	"-148.91785"
+10513937	117	"{'lat': 58.55626, 'lng': -155.77832}"	"58.55626"	"-155.77832"
+
+# converting datatypes of latitude and longitude
+
+select latitude, length(latitude), longitude, length(longitude) from trail
+order by length(latitude) desc
+limit 2;
+
+> Output
+
+"35.080330000000004"	18	"-109.78349"	10
+"33.984140000000004"	18	"-116.01655"	10
+
+# Although longitude and latitude coordinates are very specific, it appears only 5 decimal places are necessary
+
+ALTER TABLE trail
+ALTER COLUMN latitude TYPE FLOAT(6) USING latitude::FLOAT(6);
+
+ALTER TABLE trail
+ALTER COLUMN longitude TYPE FLOAT(6) USING longitude::FLOAT(6)
+
+# Verifying
+
+select trail_id, park_id, geoloc, latitude, longitude from trail limit 5;
+
+> Output
+
+10333569	253	"{'lat': 63.80495, 'lng': -148.95416}"	63.80495	-148.95416
+10347459	142	"{'lat': 58.55986, 'lng': -155.77752}"	58.55986	-155.77753
+10302108	244	"{'lat': 58.4543, 'lng': -135.86902}"	58.4543		-135.86902
+10333558	253	"{'lat': 63.7315, 'lng': -148.91785}"	63.7315		-148.91785
+10513937	117	"{'lat': 58.55626, 'lng': -155.77832}"	58.55626	-155.77832
+
+# Features will be split into a new table since it is a multi-valued attribute
+
+SELECT trail_id, trail_name, features FROM trail LIMIT 2;
+
+> Output
+
+10333569	"Bison Gulch to Denali Visitors Center"	"['dogs-no', 'views']"
+10347459	"Brooks Falls"	"['forest', 'river', 'views', 'waterfall', 'wildlife']"
+
+# We need to unpack the list. In PostGreSQL, I will use the "UNNEST" function and clean up
+# the result with "TRIM()"
+
+SELECT trail_id, trim(trim(trim(trim(feat1, '''['), ''' '), ''''), ''']') as feature
+FROM trail, UNNEST(string_to_array(features, ',')) feat1
+LIMIT 7;
+
+> Output
+
+10333569	"dogs-no"
+10333569	"views"
+10347459	"forest"
+10347459	"river"
+10347459	"views"
+10347459	"waterfall"
+10347459	"wildlife"
+
+# This works, and will be saved as another table. The primary key does not need to be explicitly
+# stated since the combination of the trail_id and feature is unique
+
+CREATE TABLE features AS (
+SELECT trail_id, trim(trim(trim(trim(feat1, '''['), ''' '), ''''), ''']') as feature
+FROM trail, UNNEST(string_to_array(features, ',')) feat1 
+);
+
+# The same methodology will be applied to activities
+
+select trail_id, activities from trail limit 10;
+
+> Output
+10333569	"['hiking', 'nature-trips']"
+10347459	"['hiking', 'walking']"
+10302108	"['hiking', 'nature-trips', 'trail-running', 'walking']"
+10333558	"['hiking', 'nature-trips', 'walking']"
+10513937	"['hiking', 'nature-trips', 'trail-running']"
+10333557	"['hiking', 'nature-trips', 'walking']"
+10302122	"['hiking', 'mountain-biking', 'nature-trips', 'walking']"
+10187810	"['backpacking', 'camping', 'hiking', 'nature-trips']"
+10016964	"['birding', 'camping', 'hiking', 'nature-trips', 'walking', 'horseback-riding']"
+10237812	"['backpacking', 'birding', 'hiking', 'nature-trips']"
+
+
+SELECT trail_id, trim(trim(trim(trim(act1, '''['), ''' '), ''''), ''']') as activity
+FROM trail, UNNEST(string_to_array(activities, ',')) act1
+LIMIT 10;
+
+10333569	"hiking"
+10333569	"nature-trips"
+10347459	"hiking"
+10347459	"walking"
+10302108	"hiking"
+10302108	"nature-trips"
+10302108	"trail-running"
+10302108	"walking"
+10333558	"hiking"
+10333558	"nature-trips"
+
+CREATE TABLE activites AS (
+SELECT trail_id, trim(trim(trim(trim(act1, '''['), ''' '), ''''), ''']') as activity
+FROM trail, UNNEST(string_to_array(activities, ',')) act1
+);
+
+# Verifying the converison worked properly
+
+SELECT DISTINCT(feature) FROM features;
+
+"dogs"
+"wild-flowers"
+"views"
+"historic-site"
+"rails-trails"
+"cave"
+"hot-springs"
+"paved"
+"kids"
+"city-walk"
+"waterfall"
+"strollers"
+"dogs-no"
+"river"
+
+"lake"
+"forest"
+"dogs-leash"
+"ada"
+"partially-paved"
+"beach"
+"wildlife"
+
+# There is a blank character in the list. This is likely because there are no features for a trail.
+# Investigating the issue
+
+SELECT * FROM features
+WHERE feature = '';
+
+> Output
+
+10307988	
+10366335	
+10467167	
+
+SELECT t.trail_id, p.park_name,t.trail_name, t.features FROM TRAIL t
+JOIN park p
+ON t.park_id = p.park_id
+WHERE t.trail_id in (
+SELECT trail_id FROM features
+WHERE feature = ''
+);
+
+> Output
+
+10307988	"Saguaro National Park"	"Wild Horse to Garwood Dam"	"[]"
+10467167	"Grand Teton National Park"	"Continental Divide Snowmobile Route"	"[]"
+10366335	"Saguaro National Park"	"Hugh Norris, Sendero Esperanza, Dobbie Wash Loop"	"[]"
+
+# Even though there are no features listed, it should be okay, considering there are only 3 empty entries.
+# We do not want to mislabel any of the features so it is best to leave these values as is
+
+# When looking at the  list, it appears that all situations for "dogs" is covered.
+# There could be dogs, no dogs, and dogs leashed. I want to make sure these  attributes
+# are present for all trails and there is no conflicting features.
+
+SELECT count(distinct(trail_id)) FROM features
+WHERE feature ILIKE '%dog%'
+
+> Output
+
+2864
+
+SELECT count(distinct(trail_id)) FROM features
+WHERE trail_id NOT IN (
+SELECT distinct(trail_id) FROM features
+WHERE feature ILIKE '%dog%'
+	)
+
+> Output
+
+449
+
+# 449 / 3313 = 0.1355
+
+# Approximately 13.5 % of trails do not make the distinction of whether dogs are allowed
+
+SELECT trail_id, p.park_name, features FROM trail
+JOIN park p
+on trail.park_id = p.park_id
+WHERE trail_id IN (
+SELECT distinct(trail_id) FROM features
+WHERE trail_id NOT IN (
+SELECT distinct(trail_id) FROM features
+WHERE feature ILIKE '%dog%'
+	))
+
+> Output
+
+10347459	"Katmai National Park"	"['forest', 'river', 'views', 'waterfall', 'wildlife']"
+10513937	"Katmai National Park"	"['forest', 'views', 'wild-flowers', 'wildlife']"
+10333557	"Denali National Park"	"['kids', 'views', 'wildlife']"
+10315767	"Grand Canyon National Park"	"['views', 'wild-flowers']"
+10023828	"Grand Canyon National Park"	"['kids', 'paved', 'views']"
+10365390	"Grand Canyon National Park"	"['views', 'waterfall']"
+10274527	"Grand Canyon National Park"	"['kids', 'views']"
+10041071	"Saguaro National Park"	"['kids', 'partially-paved', 'views', 'wild-flowers', 'wildlife']"
+
+# Let see if there is a trend based on the national park
+
+SELECT p.park_name, count(*) FROM trail
+JOIN park p
+on trail.park_id = p.park_id
+WHERE trail_id IN (
+SELECT distinct(trail_id) FROM features
+WHERE trail_id NOT IN (
+SELECT distinct(trail_id) FROM features
+WHERE feature ILIKE '%dog%'
+	))
+GROUP BY p.park_name
+ORDER BY count(*) DESC
+
+"Great Smoky Mountains National Park"	45
+"Yosemite National Park"	38
+"Rocky Mountain National Park"	36
+"Shenandoah National Park"	33
+"Death Valley National Park"	24
+"Acadia National Park"	23
+"Joshua Tree National Park"	21
+"Olympic National Park"	19
+"Canyonlands National Park"	17
+"Yellowstone National Park"	17
+
+# After brief research, the accessibility of dogs on trails in each national park is high variability.
+# At the moment, this feature is not particularly critical to generate understanding in the dataset,
+# However, it may be returned to later in time
+
+
+SELECT count(distinct(trail_id)) FROM features
+WHERE feature ILIKE '%dog%'
+
+> Output
+
+2864
+
+
+# Same process as above for activities
+
+SELECT DISTINCT(activity) FROM activities;
+
+"off-road-driving"
+"skiing"
+"snowboarding"
+"canoeing"
+"fishing"
+"mountain-biking"
+"nature-trips"
+"ice-climbing"
+"sea-kayaking"
+"rock-climbing"
+"scenic-driving"
+"whitewater-kayaking"
+"fly-fishing"
+"horseback-riding"
+"cross-country-skiing"
+"camping"
+"snowshoeing"
+"rails-trails"
+"paddle-sports"
+"road-biking"
+"surfing"
+"walking"
+"hiking"
+"backpacking"
+"bike-touring"
+"birding"
+"trail-running"
+
+# No need to make adjustments.
+
+# Next, I want to clean up length and elevation gain by removing impossible values and standardizing the units
+
+# First, length cannot be 0. There are 2 trails in the DB where length is 0
+
+select trail_id, trail_name, length, elevation_gain from trail
+order by length asc
+limit 10;
+
+>Output
+
+10333504	"Newspaper Rock Trail"					0		0
+10039529	"Oxbow Bend Overlook"					0		0
+10261650	"Petrified Tree Trail"					160.934	5.7912
+10328654	"Pulpit Rock Overlook Trail"			160.934	4.8768
+10328659	"Sunset View Trail"						160.934	0.9144
+10328656	"Chasm View South Rim Lookout Trail"	160.934	0
+10258602	"Point Imperial"						160.934	6.7056
+10258658	"Walhalla Ruins"						160.934	0
+10258659	"Walhalla Overlook"						160.934	0
+10294375	"Grizzly Falls"							160.934	5.7912
+
+# Elevation gain = 0 is okay, since the trail could simply be flat.
+# Since the length is the conversion from miles to feet, and these trails are very short, the length rounds down to 0
+# I will put a place holder value here, since this will prevent a calculation at a later step. These trails have distance
+# that are very small, so I will set it equal to 0.01 miles, or 52.8 feet.
+
+UPDATE trail
+SET length = 52.8 WHERE length = 0
+RETURNING trail_id, trail_name, length;
+
+10333504	"Newspaper Rock Trail"	52.8
+10039529	"Oxbow Bend Overlook"	52.8
+
+# From length and elevation gain, I will calculate a 'gain_per_foot' that is the average elevation gain per foot traveled
+
+ALTER TABLE trail
+ADD COLUMN gain_per_foot real;
+
+SELECT trail_id, trail_name, length, elevation_gain, 
+	(elevation_gain / length) as gain_per_foot FROM trail
+where (elevation_gain / length) != 0
+ORDER BY (elevation_gain / length) asc limit 10;
+
+> Output
+
+10451634	"Congaree River Blue Trail"											75317.11	1.8288	2.4281335e-05
+10267870	"West Lake Canoe Trails"											27519.715	0.9144	3.3227087e-05
+10267811	"Wilderness Waterway"												143070.33	5.7912	4.0477997e-05
+10034730	"Biscayne National Park Walk"										15932.466	0.9144	5.7392244e-05
+10017967	"Everglades National Park East Entrance to Flamingo Scenic Route"	58258.11	7.9248	0.00013602914
+10267812	"Flamingo to Coot Bay"												12070.05	1.8288	0.00015151553
+10013481	"Snake Bight Trail"													5793.624	0.9144	0.00015782868
+10016478	"Everglades Coastal Prairie Trail"									27358.78	4.8768	0.00017825357
+10013224	"Rowdy Bend Trail"													8368.568	1.8288	0.000218532
+10236014	"Bear Lake Trail"													12552.852	2.7432	0.00021853202
+
+# Adding in gain_per_foot
+
+UPDATE trail
+SET gain_per_foot = (elevation_gain / length)
+
+# Given the large variety in activities, I want to see if they are similar based on national park, or they are
+# truly unique to the trails. I will investigate Yosemite, as a spot check, since I am most familiar with its trails.
+
+SELECT  p.park_name, t.trail_name, f.feature from park p
+JOIN trail t
+on p.park_id = t.park_id
+JOIN features f
+on t.trail_id = f.trail_id
+WHERE p.park_name ILIKE '%Yos%'
+
+> Output
+
+"Yosemite National Park"	"Vernal and Nevada Falls via the Mist Trail"	"dogs-no"
+"Yosemite National Park"	"Vernal and Nevada Falls via the Mist Trail"	"forest"
+"Yosemite National Park"	"Vernal and Nevada Falls via the Mist Trail"	"partially-paved"
+"Yosemite National Park"	"Vernal and Nevada Falls via the Mist Trail"	"river"
+"Yosemite National Park"	"Vernal and Nevada Falls via the Mist Trail"	"views"
+"Yosemite National Park"	"Vernal and Nevada Falls via the Mist Trail"	"waterfall"
+"Yosemite National Park"	"Vernal and Nevada Falls via the Mist Trail"	"wild-flowers"
+"Yosemite National Park"	"Vernal and Nevada Falls via the Mist Trail"	"wildlife"
+"Yosemite National Park"	"Upper Yosemite Falls Trail"	"dogs-no"
+"Yosemite National Park"	"Upper Yosemite Falls Trail"	"forest"
+"Yosemite National Park"	"Upper Yosemite Falls Trail"	"river"
+"Yosemite National Park"	"Upper Yosemite Falls Trail"	"views"
+"Yosemite National Park"	"Upper Yosemite Falls Trail"	"waterfall"
+"Yosemite National Park"	"Upper Yosemite Falls Trail"	"wild-flowers"
+"Yosemite National Park"	"Upper Yosemite Falls Trail"	"wildlife"
+
+# Lets see on a larger scale
+
+SELECT  p.park_name, f.feature, count(t.trail_id) from park p
+JOIN trail t
+on p.park_id = t.park_id
+JOIN features f
+on t.trail_id = f.trail_id
+WHERE p.park_name ILIKE '%Yos%'
+GROUP BY p.park_name, f.feature
+ORDER BY p.park_name;
+
+> Output
+
+"Yosemite National Park"	"waterfall"	77
+"Yosemite National Park"	"beach"	3
+"Yosemite National Park"	"dogs-no"	198
+"Yosemite National Park"	"historic-site"	7
+"Yosemite National Park"	"paved"	4
+"Yosemite National Park"	"wild-flowers"	169
+"Yosemite National Park"	"ada"	4
+"Yosemite National Park"	"views"	228
+"Yosemite National Park"	"cave"	1
+"Yosemite National Park"	"strollers"	6
+"Yosemite National Park"	"dogs-leash"	6
+"Yosemite National Park"	"lake"	103
+"Yosemite National Park"	"wildlife"	178
+"Yosemite National Park"	"partially-paved"	15
+"Yosemite National Park"	"river"	78
+"Yosemite National Park"	"forest"	206
+"Yosemite National Park"	"kids"	53
+
+# Given the high variability of these values, it seems that the attributes are trail specific so no need
+# to make changes
+
+# I want to add in a derived feature for average elevation gain per foot, however, the units for all the trails
+# is not consistent. Trails in Hawaii use the metric system, while all others use imperial. The unit was not included
+# in any of the tables derived from rawdata. I will replace hawaii data in trail to the correct values.
+
+# This is confirmed via checking the website, and comparing the values for elevation_gain and length
+
+select t.trail_id, p.park_name, t.length, 
+	t.elevation_gain, t.length*3.28084::real, t.elevation_gain*3.28084::real from trail t
+join park p
+on p.park_id = t.park_id
+where p.state = 'Hawaii'
+LIMIT 5;
+
+> Output
+
+10007409	"Hawaii Volcanoes National Park"	10138.842	323.6976	33263.918	1062
+10017468	"Hawaii Volcanoes National Park"	58097.176	2219.8584	190607.53	7283
+10398366	"Hawaii Volcanoes National Park"	3540.548	67.9704		11615.972	223
+10005198	"Hawaii Volcanoes National Park"	1931.208	13.716		6335.9844	45
+10038551	"Hawaii Volcanoes National Park"	643.736		11.8872		2111.9949	39
+
+UPDATE trail
+SET length = length*3.28084::real
+WHERE park_id IN (
+select park_id from park
+where state='Hawaii'
+)
+RETURNING trail_name, park_id, length;
+
+"Nāulu Trail"						242	33263.918
+"Mauna Loa Trail"					242	190607.53
+"Crater Rim Drive"					25	11615.972
+"Sandalwood (Iliahi) Trail"			242	6335.9844
+"Thurston Lava Tube Trail [CLOSED]"	242	2111.9949
+
+# Finally, with all the features changed and database modifications, we can drop intermediate columns and tables
+
+DROP TABLE nationalpark;
+
+ALTER TABLE trail
+DROP COLUMN geoloc;
+ALTER TABLE trail
+DROP COLUMN features;
+ALTER TABLE trail
+DROP COLUMN activities;
+
+# DATA EXPLORATION IN PostGreSQL
+
+# I want to be able to futrther understand the relationship on how a highly rated, or popular trail is evaluated
+
+# First, I want to determine the distribution of each of the categories individually from trail review
+
+select difficulty_rating, count(difficulty_rating) from trailreview
+group by difficulty_rating
+order by difficulty_rating desc
+
+1	885
+3	1453
+5	787
+7	188
+
+select avg_rating, count(*) from trailreview
+group by avg_rating
+order by avg_rating asc
+
+0	116 
+1	6
+1.5	3
+2	12
+2.5	18
+3	80
+3.5	212
+4	805
+4.5	1522
+5	539
+
+# 0 means that a trail does not have any reviews - these values should not be included in the park_rating since
+# it does not represent what a visitor thinks of the trail
+
+# Creating a avg_rating for park that encompasses all the trails within a given park, and returns a weight average rating
+
+CREATE VIEW park_rating AS (
+select park_name, CAST(sum(num_reviews) AS real) as total_reviews,
+	 CAST(sum(avg_rating*num_reviews)/sum(num_reviews) AS REAL) as avg_rating_park from trail t
+join park p on p.park_id = t.park_id
+join trailreview r on r.trail_id = t.trail_id
+where num_reviews > 0
+group by park_name
+order by park_name
+)
+
+> Output
+
+"Acadia National Park"							12286	4.549935
+"Arches National Park"							7869	4.6922736
+"Badlands National Park"						1474	4.3110585
+"Big Bend National Park"						2874	4.498956
+"Biscayne National Park"						49		3.9387755
+"Black Canyon of the Gunnison National Park"	858		4.393357
+"Bryce Canyon National Park"					5886	4.6632686
+"Canyonlands National Park"						3721	4.452835
+"Capitol Reef National Park"					2278	4.4506145
+"Carlsbad Caverns National Park"				197		4.6573606
+
+# Returning the quartiles
+
+select 
+	min(avg_rating_park),
+	percentile_disc(0.25) within group (order by avg_rating_park),
+	percentile_disc(0.5) within group (order by avg_rating_park),
+	percentile_disc(0.75) within group (order by avg_rating_park),
+	max(avg_rating_park)
+from park_rating;
+
+> Output
+
+"min"		"percentile_disc"	"percentile_disc"	"percentile_disc"	"max"
+3.857143	4.264344			4.4506145			4.5861816			4.8268933
+
+select 
+	min( total_reviews),
+	percentile_disc(0.25) within group (order by total_reviews),
+	percentile_disc(0.5) within group (order by  total_reviews),
+	percentile_disc(0.75) within group (order by  total_reviews),
+	max( total_reviews)
+from park_rating
+
+
+"min"	"percentile_disc"	"percentile_disc"	"percentile_disc"	"max"
+9		442					1357				5886				27999
+
+select sum(avg_rating_park * total_reviews) / sum(total_reviews) as average_rating from park_rating
+
+average_rating
+4.5407906
+
+
+# Above we can see that the median park rating is a 4.45, on a 0 to 5 scale which means there is significant
+# bias when a person reviews a trail, which is understandable since national parks are beautiful and revitalizing
+# However, we also see that the average person reviews a trail at 4.54, which means the park with above average trails
+# would be above this rating. This methodology cannot apply to simple trails since the trails already have the averged
+# value that is rounded to the nearet .5.
+
+# Visualizaing the top 100 trails overall based on popularity
+
+
+
+
+
+# Creating a view to recommend the most popular trail at each difficulty at each nationa park
+
+CREATE VIEW recommend AS (
+select t.trail_id, p.park_name, t.trail_name, r.difficulty_rating, r.popularity, t1.rank,
+	case when rank = 1 then 1
+		else 0
+		end as recommended
+from trail t
+join park p on t.park_id = p.park_id
+join trailreview r on t.trail_id = r.trail_id
+join (
+select park_name, trail_name, difficulty_rating, popularity, Rank()
+	over (Partition by park_name, difficulty_rating
+		  ORDER BY popularity DESC) as rank from trail t
+join trailreview r on t.trail_id = r.trail_id
+join park p on p.park_id = t.park_id) t1
+on t1.trail_name = t.trail_name and t1.park_name = p.park_name
+	);
+
+
+
+# Weighted average for each park - each review from each trail has equal weight when assessing the overall national park
+
+
+select park_name, sum(num_reviews),sum(avg_rating * num_reviews)/ sum(num_reviews) as weighted_pavg_park
+from trail t
+join park p on p.park_id = t.park_id
+join trailreview r on t.trail_id = r.trail_id
+where num_reviews > 0
+group by park_name
+order by sum(avg_rating * num_reviews)/ sum(num_reviews) desc
