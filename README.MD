@@ -1,4 +1,4 @@
-# [National Park Trails Dashboard](https://public.tableau.com/app/profile/jordan.harilal/viz/NationalParkTrails_16774518911070/NationalParkTrails?publish=yes)
+# [Trails of the National Park Dashboard](https://public.tableau.com/app/profile/jordan.harilal/viz/NationalParkTrails_16774518911070/NationalParkTrails?publish=yes)
 
 
 
